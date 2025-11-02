@@ -17,6 +17,7 @@ Choice: 2
 2. Jane Smith | 555-5678 | jane@example.com
 '''
 import csv
+import os
 def add():
     name=input("name: ")
     phone= input("phone: ") 
@@ -26,22 +27,25 @@ def add():
     #     'phone':phone,
     #     'email':email
     # }
-    with open('names.csv', 'w', newline='') as f:
+    with open('names.csv', 'a', newline='') as f:
         fieldnames = ['name', 'phone', 'email']
         writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter='|')
-        writer.writeheader()
+        if os.stat('names.csv').st_size == 0:
+            writer.writeheader()
         writer.writerow({'name': name, 'phone': phone, 'email': email})
+    print("Contact saved!")
 def viewall():
     
     with open('names.csv', 'r') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            print({row['name']}, {row['phone']}, {row['email']})
+        reader = csv.DictReader(f, delimiter='|')
+        for i, row in enumerate(reader, start=1):
+            print(f"{i}. {row['name']} | {row['phone']} | {row['email']}")
+
 def search(f ):
     search=input("enter the searched ")
     found_rows = []
     with open(f, 'r', newline='') as csvfile:
-        reader = csv.reader(csvfile)
+        reader = csv.reader(csvfile,delimiter='|')
         for row in reader:
             for cell in row:
                 if search in cell:
@@ -53,30 +57,30 @@ def search(f ):
 
 def update(f, col, value, colupdate,valueupdate):
     updated_rows = []
-    with open(f, 'r', newline='') :
-        reader = csv.DictReader(f)
+    with open(f, 'r', newline='') as inn:
+        reader = csv.DictReader(inn,delimiter='|')
         fieldnames = reader.fieldnames
         for row in reader:
             if row[col] == value:
                 row[colupdate] = valueupdate
             updated_rows.append(row)
 
-    with open(f, 'w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+    with open(f, 'w', newline='') as outt:
+        writer = csv.DictWriter(outt, fieldnames=fieldnames,delimiter='|')
         writer.writeheader()
         writer.writerows(updated_rows)
 def delete(f, col,value):
 
     remaining_rows = []
-    with open(f, 'r', newline='') :
-        reader = csv.DictReader(f)
+    with open(f, 'r', newline='')as inn :
+        reader = csv.DictReader(inn,delimiter='|')
         fieldnames = reader.fieldnames
-    for row in reader:
-        if row[col] != value:
-            remaining_rows.append(row)
+        for row in reader:
+            if row[col] != value:
+                remaining_rows.append(row)
 
     with open(f, 'w', newline='') as outfile:
-        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames,delimiter='|')
         writer.writeheader()
         writer.writerows(remaining_rows)
 
@@ -97,7 +101,12 @@ while ch!=0:
         else:
             print(f" not found in '{'names.csv'}'.")
     elif ch =="4":
+        col= input("enter the col")
+        val= input("enter the value you want to delete")
+        delete('names.csv', col,val)
 
+        
+    elif ch=="5":
         col= input("enter the col")
         val= input("enter the value you want to update")
         
@@ -105,10 +114,7 @@ while ch!=0:
         upval= input("enter the updated value")
 
         update('names.csv',col,val, upcol,upval)
-    elif ch=="5":
-        col= input("enter the col")
-        val= input("enter the value you want to delete")
-        delete('names.csv', col,val)
+        
 
 
 # writer.writerow({'first_name': 'Lovely', 'last_name': 'Spam'})
