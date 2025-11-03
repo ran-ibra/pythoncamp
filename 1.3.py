@@ -45,6 +45,7 @@ print (f"most frequant {getmax}")
 #         break
 #     i+=1
 #     j-=1
+reversed_str = words[::-1]
 p = (words == words[::-1])
 if (p):
     print ("pallindrom")
