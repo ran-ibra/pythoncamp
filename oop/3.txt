@@ -2,3 +2,6 @@ hi
 coding python 
  using virtual enviornment
  now we are here line four
+ python
+line six is an even number 
+seven is an odd one 
